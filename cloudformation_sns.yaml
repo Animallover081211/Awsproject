@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for SNS Topic - Task 3'
+
+Parameters:
+  SNSTopicName:
+    Type: String
+    Default: ImageAlerts
+    Description: Name for the SNS topic
+  EmailAddress:
+    Type: String
+    Default: example@email.com
+    Description: Email address for notifications
+
+Resources:
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Ref SNSTopicName
+      DisplayName: ImageProcessingAlerts
+
+  SNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref SNSTopic
+      Protocol: email
+      Endpoint: !Ref EmailAddress
+
+Outputs:
+  SNSTopicArn:
+    Description: ARN of the SNS topic
+    Value: !Ref SNSTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-SNSTopicArn'

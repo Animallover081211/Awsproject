@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for SQS and S3 - Task 1'
+
+Parameters:
+  SQSQueueName:
+    Type: String
+    Default: ImageProcessingQueue
+    Description: Name for the SQS queue
+  S3BucketName:
+    Type: String
+    Default: image-storage-bucket
+    Description: Name for the S3 bucket (must be globally unique)
+
+Resources:
+  ImageQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref SQSQueueName
+      VisibilityTimeout: 300
+      MessageRetentionPeriod: 345600
+      DelaySeconds: 0
+
+  ImageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref S3BucketName
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ['*']
+            AllowedMethods: [GET, PUT, POST]
+            AllowedOrigins: ['*']
+            MaxAge: 3000
+
+  QueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: 'AllowS3ToSendMessages'
+            Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt ImageQueue.Arn
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub 'arn:aws:s3:::${S3BucketName}'
+      Queues:
+        - !Ref ImageQueue
+
+Outputs:
+  QueueURL:
+    Description: URL of the created SQS queue
+    Value: !Ref ImageQueue
+    Export:
+      Name: !Sub '${AWS::StackName}-QueueURL'
+
+  QueueArn:
+    Description: ARN of the created SQS queue
+    Value: !GetAtt ImageQueue.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-QueueArn'
+
+  BucketName:
+    Description: Name of the created S3 bucket
+    Value: !Ref ImageBucket
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketName'
+
+  BucketArn:
+    Description: ARN of the created S3 bucket
+    Value: !GetAtt ImageBucket.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketArn'
