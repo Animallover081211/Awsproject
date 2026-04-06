@@ -1,0 +1,16 @@
+STUDENT_ID = 'S2230365'
+
+AWS_REGION = 'us-east-1'
+
+S3_BUCKET = f'image-storage-bucket{STUDENT_ID}'
+SQS_QUEUE_URL = f'https://sqs.us-east-1.amazonaws.com/123456789012/ImageProcessingQueue{STUDENT_ID}'
+DYNAMODB_TABLE = f'ImageMetadata{STUDENT_ID}'
+SNS_TOPIC_ARN = f'arn:aws:sns:us-east-1:123456789012:ImageAlerts{STUDENT_ID}'
+
+EC2_KEY_NAME = 'YOUR_KEY_PAIR_NAME'
+EC2_SECURITY_GROUP_ID = 'YOUR_SECURITY_GROUP_ID'
+EC2_SUBNET_ID = 'YOUR_SUBNET_ID'
+EC2_INSTANCE_TYPE = 't2.micro'
+
+IMAGE_FOLDER = './images'
+UPLOAD_INTERVAL = 30

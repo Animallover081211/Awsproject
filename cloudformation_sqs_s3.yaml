@@ -2,20 +2,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFormation template for SQS and S3 - Task 1'
 
 Parameters:
+  StudentID:
+    Type: String
+    Default: YOUR_STUDENT_ID
+    Description: Your Student ID (e.g., 1234567)
   SQSQueueName:
     Type: String
-    Default: ImageProcessingQueue
+    Default: !Sub 'ImageProcessingQueue${StudentID}'
     Description: Name for the SQS queue
   S3BucketName:
     Type: String
-    Default: image-storage-bucket
+    Default: !Sub 'image-storage-bucket${StudentID}'
     Description: Name for the S3 bucket (must be globally unique)
 
 Resources:
   ImageQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: !Ref SQSQueueName
+      QueueName: !Sub '${SQSQueueName}${StudentID}'
       VisibilityTimeout: 300
       MessageRetentionPeriod: 345600
       DelaySeconds: 0
@@ -23,7 +27,7 @@ Resources:
   ImageBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref S3BucketName
+      BucketName: !Sub '${S3BucketName}${StudentID}'
       AccessControl: Private
       VersioningConfiguration:
         Status: Enabled

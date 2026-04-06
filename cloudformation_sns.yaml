@@ -2,6 +2,10 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: 'CloudFormation template for SNS Topic - Task 3'
 
 Parameters:
+  StudentID:
+    Type: String
+    Default: YOUR_STUDENT_ID
+    Description: Your Student ID (e.g., 1234567)
   SNSTopicName:
     Type: String
     Default: ImageAlerts
@@ -15,7 +19,7 @@ Resources:
   SNSTopic:
     Type: AWS::SNS::Topic
     Properties:
-      TopicName: !Ref SNSTopicName
+      TopicName: !Sub '${SNSTopicName}${StudentID}'
       DisplayName: ImageProcessingAlerts
 
   SNSSubscription:
